@@ -5,6 +5,7 @@ import {
   CallHandler,
   Logger,
 } from '@nestjs/common';
+import { FastifyReply, FastifyRequest } from 'fastify';
 
 import { Observable, throwError } from 'rxjs';
 import { catchError, tap } from 'rxjs/operators';
@@ -14,12 +15,17 @@ export class LoggerInterceptor implements NestInterceptor {
   constructor(private logger: Logger) {}
 
   intercept(context: ExecutionContext, next: CallHandler): Observable<any> {
-    const pattern = context.switchToHttp()?.getRequest()?.body;
-    const headers = context.switchToHttp()?.getRequest()?.headers;
-    const patternQuery = context.switchToHttp()?.getRequest()?.query;
-    const patternParams = context.switchToHttp()?.getRequest()?.params;
-    const routePath = context.switchToHttp()?.getRequest()?.route?.path;
-    const routeMethods = context.switchToHttp()?.getRequest()?.route?.methods;
+    const now = Date.now();
+    const ctx = context.switchToHttp();
+    const request = ctx.getRequest<FastifyRequest>();
+    const response = ctx.getResponse<FastifyReply>();
+
+    const pattern = request?.body;
+    const headers = request?.headers;
+    const patternQuery = request?.query;
+    const patternParams = request?.params;
+    const routePath = request?.url;
+    const routeMethods = request?.method;
     const sanitizedRequest = this.maskSensitiveData(pattern);
     const sanitizedRequestQuery = this.maskSensitiveData(patternQuery);
     const sanitizedRequestParams = this.maskSensitiveData(patternParams);
@@ -38,18 +44,21 @@ export class LoggerInterceptor implements NestInterceptor {
 
     return next.handle().pipe(
       tap(() => {
+        const elapsed = Date.now() - now;
         this.logger.log(
           `Finished transaction path: ${routePath}, method: ${JSON.stringify(
             routeMethods,
-          )}, message: OK`,
+          )}, response: ${response.statusCode} ${elapsed}ms`,
           trackingId,
         );
       }),
       catchError((error) => {
+        const elapsed = Date.now() - now;
+
         this.logger.error(
           `Error handling path: ${routePath}, method: ${JSON.stringify(
             routeMethods,
-          )}, message: ${JSON.stringify(sanitizedRequest)}`,
+          )}, message: ${JSON.stringify(sanitizedRequest)} ${elapsed}ms`,
           error,
           trackingId,
         );

@@ -1,3 +1,4 @@
+import { IllegalValueException } from 'src/generic/illegalvalueexception';
 import { ValueObject } from 'src/generic/valueobject';
 
 export enum Status {
@@ -9,7 +10,10 @@ export class CompletedStatus implements ValueObject<Status> {
   constructor(private readonly value: Status) {
     if (value !== undefined) {
     } else {
-      throw new Error('The Status must be defined');
+      throw new IllegalValueException(
+        'CompletedStatus',
+        'The Status must be defined',
+      );
     }
   }
 

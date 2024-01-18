@@ -9,6 +9,8 @@ import brokerConfig from './config/broker.config';
 import { ConfigService } from '@nestjs/config';
 import { AppModule } from './app.module';
 import { SwaggerConfig } from './config/swagger.config';
+import { BusinessExceptionFilter } from './infra/shared/filters/business-exception.filter';
+import { IllegalValueExceptionFilter } from './infra/shared/filters/illegar-exception.filter';
 
 async function bootstrap() {
   const app = await NestFactory.create<NestFastifyApplication>(
@@ -25,6 +27,12 @@ async function bootstrap() {
     new ValidationPipe({
       whitelist: true,
     }),
+  );
+
+  app.setGlobalPrefix(process.env.BASE_PATH || '');
+  app.useGlobalFilters(
+    new BusinessExceptionFilter(),
+    new IllegalValueExceptionFilter(),
   );
 
   const document = SwaggerModule.createDocument(app, SwaggerConfig);

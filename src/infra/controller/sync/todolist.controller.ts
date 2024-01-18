@@ -1,4 +1,4 @@
-import { Body, Controller, Inject, Post } from '@nestjs/common';
+import { Body, Controller, HttpException, Inject, Post } from '@nestjs/common';
 import {
   ApiBadRequestResponse,
   ApiCreatedResponse,
@@ -7,7 +7,7 @@ import {
 } from '@nestjs/swagger';
 import {
   CreateTaskUseCase,
-  Response,
+  CreateTaskResponse,
 } from 'src/core/application/usecases/createtask.usecase';
 import { Title } from 'src/core/domain/objects/title.vo';
 import { TaskDto } from '../todolist.dto';
@@ -27,7 +27,7 @@ export class TodoListController {
   })
   @ApiBadRequestResponse({ description: 'Bad request' })
   @Post('create')
-  async create(@Body() body: TaskDto): Promise<Response> {
+  async create(@Body() body: TaskDto): Promise<CreateTaskResponse> {
     return this.createTaskUseCase.execute({
       title: new Title(body.title),
       description: new Description(body.description),
