@@ -4,7 +4,7 @@ En este directorio tenemos la lógica de negocio y los aspectos fundamentales re
 
 ## Application
 
-Aplicaciones es el directorio en donde tenemos los **casos de uso**, que son los elementos que intervienen con la intención del negocio (guardar, consultar, validar, etc...) y por otro lado tenemos los **servicios**, o también podemos decir que son interfaces (sin la implementación técnica) orientadas al negocio, con la intención de hacer llamados o consultas externos. 
+Aplicaciones es el directorio en donde tenemos los **casos de uso**, que son los elementos que intervienen con la intención del negocio (guardar, consultar, validar, etc...) y por otro lado tenemos los **servicios**, o también podemos decir que son interfaces orientadas al negocio, con la intención de hacer llamados o consultas externos. 
 
 ## Domain
 
