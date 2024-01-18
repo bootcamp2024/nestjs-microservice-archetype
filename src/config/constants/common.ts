@@ -1,1 +1,1 @@
-export const SERVICE_NAME = 'micro-commerce-pair';
+export const SERVICE_NAME = 'micro-service-demo';
